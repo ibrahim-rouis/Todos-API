@@ -9,6 +9,21 @@ services:
     ports:
       - '5432:5432'
     restart: unless-stopped
+
+  fastify:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    ports:
+      # Change this port if you changed it in the .env file
+      - '3000:3000'
+    depends_on:
+      - postgres
   adminer:
     image: adminer
     # Fix issue when running adminer on IPv4 only protocol. Adminer runs on IPv6 by default
