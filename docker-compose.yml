@@ -1,0 +1,23 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:alpine
+    env_file:
+      - .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    restart: unless-stopped
+  adminer:
+    image: adminer
+    # Fix issue when running adminer on IPv4 only protocol. Adminer runs on IPv6 by default
+    command: php -S 0.0.0.0:8080 -t /var/www/html
+    depends_on:
+      - postgres
+    restart: always
+    ports:
+      - 8080:8080
+volumes:
+  pg_data:
+  adminer_sessions:
