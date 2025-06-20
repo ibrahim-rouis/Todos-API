@@ -6,6 +6,15 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+if (!process.env.PORT) {
+  console.error('Please set the PORT in .env file.');
+  process.exit(1);
+}
+if (!process.env.DATABASE_URL) {
+  console.error('Please set DATABASE_URL in .env file.');
+  process.exit(1);
+}
+
 export type AppOptions = {
   // Place your custom options for app below here.
 } & Partial<AutoloadPluginOptions>;
