@@ -1,9 +1,19 @@
 import { FastifyPluginAsync } from 'fastify';
 
-const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
+const IndexRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
   fastify.get('/', async function (request, reply) {
-    return { message: 'Server is online' };
+    return {
+      _links: {
+        self: { href: `${this.prefix.toString()}` },
+        auth: {
+          href: `${this.prefix.toString()}/auth`,
+          description: 'Authentication API',
+        },
+      },
+      version: '1.0.0',
+      status: 'OK',
+    };
   });
 };
 
-export default root;
+export default IndexRoute;

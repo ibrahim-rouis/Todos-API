@@ -10,24 +10,30 @@
     "watch:ts": "tsc -w",
     "dev": "npm run build:ts && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"npm:watch:ts\" \"npm:dev:start\"",
     "dev:start": "fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js",
-    "migrate": "node scripts/migrate.js"
+    "migrate": "node scripts/migrate.js",
+    "compose": "docker compose up --build --abort-on-container-failure"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@fastify/autoload": "^6.0.0",
+    "@fastify/jwt": "^9.1.0",
     "@fastify/postgres": "^6.0.2",
     "@fastify/sensible": "^6.0.0",
+    "bcrypt": "^6.0.0",
     "dotenv": "^16.5.0",
     "fastify": "^5.0.0",
     "fastify-cli": "^7.4.0",
     "fastify-plugin": "^5.0.0",
+    "fastify-type-provider-zod": "^5.0.1",
     "pg": "^8.16.2",
-    "postgrator": "^8.0.0"
+    "postgrator": "^8.0.0",
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
+    "@types/bcrypt": "^5.0.2",
     "@types/node": "^22.1.0",
     "c8": "^10.1.2",
     "concurrently": "^9.0.0",

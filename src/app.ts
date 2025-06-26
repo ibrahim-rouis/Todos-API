@@ -1,8 +1,13 @@
 import * as path from 'node:path';
+import {
+  serializerCompiler,
+  validatorCompiler,
+} from 'fastify-type-provider-zod';
 import AutoLoad, { AutoloadPluginOptions } from '@fastify/autoload';
 import { FastifyPluginAsync } from 'fastify';
 import { fileURLToPath } from 'node:url';
-
+import IndexRoute from './routes/root.js';
+import AuthRoutes from './routes/auth/index.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -13,6 +18,9 @@ if (!process.env.PORT) {
 if (!process.env.DATABASE_URL) {
   console.error('Please set DATABASE_URL in .env file.');
   process.exit(1);
+}
+if (!process.env.JWT_SECRET) {
+  console.error('Please set JWT_SECRET in .env file.');
 }
 
 export type AppOptions = {
@@ -26,10 +34,6 @@ const app: FastifyPluginAsync<AppOptions> = async (
   fastify,
   opts,
 ): Promise<void> => {
-  // Place here your custom code!
-
-  // Do not touch the following lines
-
   // This loads all plugins defined in plugins
   // those should be support plugins that are reused
   // through your application
@@ -39,13 +43,12 @@ const app: FastifyPluginAsync<AppOptions> = async (
     forceESM: true,
   });
 
-  // This loads all plugins defined in routes
-  // define your routes in one of these
-  void fastify.register(AutoLoad, {
-    dir: path.join(__dirname, 'routes'),
-    options: opts,
-    forceESM: true,
-  });
+  // Add schema validator and serializer
+  fastify.setValidatorCompiler(validatorCompiler);
+  fastify.setSerializerCompiler(serializerCompiler);
+
+  fastify.register(IndexRoute, { prefix: '/api' });
+  fastify.register(AuthRoutes, { prefix: '/api/auth' });
 };
 
 export default app;
