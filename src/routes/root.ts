@@ -1,4 +1,11 @@
 import { FastifyPluginAsync, FastifyPluginOptions } from 'fastify';
+import {
+  CreateUserData,
+  LoginUserData,
+  RegisterUserData,
+  User,
+  UserProfile,
+} from './auth/auth.schemas.js';
 
 const IndexRoute: FastifyPluginAsync<FastifyPluginOptions> = async (
   fastify,
@@ -20,5 +27,23 @@ const IndexRoute: FastifyPluginAsync<FastifyPluginOptions> = async (
     };
   });
 };
+
+declare module 'fastify' {
+  export interface FastifyInstance {
+    db: {
+      users: {
+        createUser: (user: CreateUserData) => Promise<void>;
+        getUserByEmail: (email: string) => Promise<User | null>;
+        getUserById: (id: number) => Promise<User | null>;
+      };
+    };
+    services: {
+      auth: {
+        registerUser: (user: RegisterUserData) => Promise<void>;
+        loginUser: (userReq: LoginUserData) => Promise<UserProfile>;
+      };
+    };
+  }
+}
 
 export default IndexRoute;

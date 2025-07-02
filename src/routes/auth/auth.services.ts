@@ -34,14 +34,3 @@ export default fp(async (fastify, opts) => {
     },
   });
 });
-
-declare module 'fastify' {
-  export interface FastifyInstance {
-    services: {
-      auth: {
-        registerUser: (user: RegisterUserData) => Promise<void>;
-        loginUser: (userReq: LoginUserData) => Promise<UserProfile>;
-      };
-    };
-  }
-}

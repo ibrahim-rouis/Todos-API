@@ -35,15 +35,3 @@ export default fp(async (fastify, opts) => {
     },
   });
 });
-
-declare module 'fastify' {
-  export interface FastifyInstance {
-    db: {
-      users: {
-        createUser: (user: CreateUserData) => Promise<void>;
-        getUserByEmail: (email: string) => Promise<User | null>;
-        getUserById: (id: number) => Promise<User | null>;
-      };
-    };
-  }
-}
