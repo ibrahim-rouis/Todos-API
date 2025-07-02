@@ -1,12 +1,17 @@
-import { FastifyPluginAsync } from 'fastify';
+import { FastifyPluginAsync, FastifyPluginOptions } from 'fastify';
 
-const IndexRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
+const IndexRoute: FastifyPluginAsync<FastifyPluginOptions> = async (
+  fastify,
+  opts,
+): Promise<void> => {
+  const { prefix } = opts;
+
   fastify.get('/', async function (request, reply) {
     return {
       _links: {
-        self: { href: `${this.prefix.toString()}` },
+        self: { href: `${prefix.toString()}` },
         auth: {
-          href: `${this.prefix.toString()}/auth`,
+          href: `${prefix.toString()}/auth`,
           description: 'Authentication API',
         },
       },

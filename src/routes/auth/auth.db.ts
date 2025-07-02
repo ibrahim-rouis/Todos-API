@@ -14,16 +14,22 @@ export default fp(async (fastify, opts) => {
       },
       getUserByEmail: async function (email: string): Promise<User | null> {
         return await fastify.db_connection_wrapper(async (client) => {
-          const users = await client.query(
+          const result = await client.query(
             'select id, username, email, password_hash from users where email = $1',
             [email],
           );
 
-          if (!users) {
-            return null;
-          }
+          return result.rows.length > 0 ? result.rows[0] : null;
+        });
+      },
+      getUserById: async function (id: number): Promise<User | null> {
+        return await fastify.db_connection_wrapper(async (client) => {
+          const result = await client.query(
+            'select id, username, email, password_hash from users where id = $1',
+            [id],
+          );
 
-          return users[0];
+          return result.rows.length > 0 ? result.rows[0] : null;
         });
       },
     },
@@ -36,6 +42,7 @@ declare module 'fastify' {
       users: {
         createUser: (user: CreateUserData) => Promise<void>;
         getUserByEmail: (email: string) => Promise<User | null>;
+        getUserById: (id: number) => Promise<User | null>;
       };
     };
   }

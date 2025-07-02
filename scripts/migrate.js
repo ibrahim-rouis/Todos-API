@@ -23,8 +23,9 @@ async function migrate() {
 
   try {
     await client.connect();
+    console.log(`Running migrations on database: ${process.env.POSTGRES_DB}`);
     const postgrator = new Postgrator({
-      migrationPattern: path.join(process.cwd(), '/migrations/*'),
+      migrationPattern: path.join(process.cwd(), 'migrations', '*'),
       driver: 'pg',
       database: process.env.POSTGRES_DB,
       schemaTable: 'migrations',
@@ -38,17 +39,20 @@ async function migrate() {
       console.log(
         'No migrations run for schema "public". Already at the latest one.',
       );
+    } else {
+      console.log(
+        'Migrations applied:',
+        result.map((r) => r.filename).join(', '),
+      );
+      console.log('Migration done.');
     }
-
-    console.log('Migration done.');
-
-    process.exitCode = 0;
   } catch (err) {
     console.error(err);
     process.exitCode = 1;
   }
 
   await client.end();
+  process.exit(0);
 }
 
 migrate();

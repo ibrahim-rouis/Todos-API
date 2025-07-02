@@ -1,6 +1,10 @@
 import fp from 'fastify-plugin';
-import { RegisterUserData } from './auth.schemas.js';
-import { hashPassword } from '../../utils/password-utils.js';
+import {
+  LoginUserData,
+  RegisterUserData,
+  UserProfile,
+} from './auth.schemas.js';
+import { hashPassword, verifyPassword } from '../../utils/password-utils.js';
 import authDb from './auth.db.js';
 
 export default fp(async (fastify, opts) => {
@@ -16,6 +20,17 @@ export default fp(async (fastify, opts) => {
           password_hash,
         });
       },
+      loginUser: async function (userReq: LoginUserData): Promise<UserProfile> {
+        const user = await fastify.db.users.getUserByEmail(userReq.email);
+        if (!user) {
+          throw Error('Email not found');
+        }
+        if (await verifyPassword(userReq.password, user.password_hash)) {
+          return user;
+        } else {
+          throw Error('Incorrect password');
+        }
+      },
     },
   });
 });
@@ -25,6 +40,7 @@ declare module 'fastify' {
     services: {
       auth: {
         registerUser: (user: RegisterUserData) => Promise<void>;
+        loginUser: (userReq: LoginUserData) => Promise<UserProfile>;
       };
     };
   }

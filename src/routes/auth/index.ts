@@ -1,18 +1,35 @@
-import { FastifyPluginAsync, FastifyRequest } from 'fastify';
-import { RegisterUserData, RegisterUserSchema } from './auth.schemas.js';
+import {
+  FastifyPluginAsync,
+  FastifyPluginOptions,
+  FastifyRequest,
+} from 'fastify';
+import {
+  LoginUserData,
+  LoginUserSchema,
+  RegisterUserData,
+  RegisterUserSchema,
+  UserProfile,
+  UserProfileSchema,
+} from './auth.schemas.js';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import authServices from './auth.services.js';
+import z from 'zod';
 
-const AuthRoutes: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
+const AuthRoutes: FastifyPluginAsync<FastifyPluginOptions> = async (
+  fastify,
+  opts,
+): Promise<void> => {
   // Plug services
   fastify.register(authServices);
+
+  const { prefix } = opts;
 
   fastify.get('/', async function (request, reply) {
     return {
       _links: {
-        self: { href: `${this.prefix.toString()}` },
-        register: { href: `${this.prefix.toString()}/register` },
-        login: { href: `${this.prefix.toString()}/login` },
+        self: { href: `${prefix.toString()}` },
+        register: { href: `${prefix.toString()}/register` },
+        login: { href: `${prefix.toString()}/login` },
       },
     };
   });
@@ -22,6 +39,11 @@ const AuthRoutes: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     {
       schema: {
         body: RegisterUserSchema,
+        response: {
+          200: z.object({
+            status: z.string(),
+          }),
+        },
       },
     },
     async function (
@@ -31,6 +53,60 @@ const AuthRoutes: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       await this.services.auth.registerUser(request.body);
       return {
         status: 'success',
+      };
+    },
+  );
+
+  fastify.withTypeProvider<ZodTypeProvider>().post(
+    '/login',
+    {
+      schema: {
+        body: LoginUserSchema,
+        response: {
+          200: z.object({
+            status: z.string(),
+            data: z.object({
+              token: z.string(),
+            }),
+          }),
+        },
+      },
+    },
+    async function (request: FastifyRequest<{ Body: LoginUserData }>, reply) {
+      const profile = await this.services.auth.loginUser(request.body);
+      const token = await reply.jwtSign({
+        id: profile.id,
+        email: profile.email,
+      });
+      return {
+        status: 'success',
+        data: {
+          token,
+        },
+      };
+    },
+  );
+
+  fastify.get(
+    '/profile',
+    {
+      preHandler: [fastify.authenticate],
+      schema: {
+        response: {
+          200: z.object({
+            status: z.string(),
+            data: UserProfileSchema,
+          }),
+        },
+      },
+    },
+    async function (request, reply) {
+      const user: UserProfile | null = await this.db.users.getUserById(
+        request.user.id,
+      );
+      return {
+        status: 'success',
+        data: user,
       };
     },
   );

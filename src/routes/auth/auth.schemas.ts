@@ -37,7 +37,10 @@ export const LoginUserSchema = z
   .merge(UserSchema)
   .omit({ id: true, password_hash: true, username: true });
 
+export const UserProfileSchema = UserSchema.omit({ password_hash: true });
+
 export type User = z.infer<typeof UserSchema>;
 export type RegisterUserData = z.infer<typeof RegisterUserSchema>;
 export type LoginUserData = z.infer<typeof LoginUserSchema>;
 export type CreateUserData = z.infer<typeof CreateUserSchema>;
+export type UserProfile = z.infer<typeof UserProfileSchema>;
