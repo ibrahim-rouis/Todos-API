@@ -44,3 +44,4 @@ export type RegisterUserData = z.infer<typeof RegisterUserSchema>;
 export type LoginUserData = z.infer<typeof LoginUserSchema>;
 export type CreateUserData = z.infer<typeof CreateUserSchema>;
 export type UserProfile = z.infer<typeof UserProfileSchema>;
+export type UserId = z.infer<typeof idSchema>;

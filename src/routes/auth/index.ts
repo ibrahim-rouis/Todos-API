@@ -50,7 +50,7 @@ const AuthRoutes: FastifyPluginAsync<FastifyPluginOptions> = async (
       request: FastifyRequest<{ Body: RegisterUserData }>,
       reply,
     ) {
-      await this.services.auth.registerUser(request.body);
+      await this.authServices.registerUser(request.body);
       return {
         status: 'success',
       };
@@ -73,7 +73,7 @@ const AuthRoutes: FastifyPluginAsync<FastifyPluginOptions> = async (
       },
     },
     async function (request: FastifyRequest<{ Body: LoginUserData }>, reply) {
-      const profile = await this.services.auth.loginUser(request.body);
+      const profile = await this.authServices.loginUser(request.body);
       const token = await reply.jwtSign({
         id: profile.id,
         email: profile.email,
@@ -101,7 +101,7 @@ const AuthRoutes: FastifyPluginAsync<FastifyPluginOptions> = async (
       },
     },
     async function (request, reply) {
-      const user: UserProfile | null = await this.db.users.getUserById(
+      const user: UserProfile | null = await this.dbUsers.getUserById(
         request.user.id,
       );
       return {

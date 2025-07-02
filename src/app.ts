@@ -8,6 +8,7 @@ import { FastifyPluginAsync } from 'fastify';
 import { fileURLToPath } from 'node:url';
 import IndexRoute from './routes/root.js';
 import AuthRoutes from './routes/auth/index.js';
+import TodosRoutes from './routes/todos/index.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -49,6 +50,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
 
   fastify.register(IndexRoute, { prefix: '/api' });
   fastify.register(AuthRoutes, { prefix: '/api/auth' });
+  fastify.register(TodosRoutes, { prefix: '/api/todos' });
 };
 
 export default app;
