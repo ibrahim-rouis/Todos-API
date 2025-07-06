@@ -29,6 +29,10 @@ const IndexRoute: FastifyPluginAsync<FastifyPluginOptions> = async (
           href: `${prefix.toString()}/auth`,
           description: 'Authentication API',
         },
+        todos: {
+          href: `${prefix.toString()}/todos`,
+          description: 'Todos API',
+        },
       },
       version: '1.0.0',
       status: 'OK',
