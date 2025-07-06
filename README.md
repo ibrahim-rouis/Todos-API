@@ -37,6 +37,12 @@ First edit `.env` file to connect to your own Postgres database then run:
 - Zod
 - fastify-jwt
 
+## Play with API
+
+You can import Postman collection file `Todos API.postman_collection.json` to your Postman and play with the API endpoints.
+
+The collection has scripts handles saving and sending the JWT Token automatically.
+
 ## Endpoints
 
 All endpoints except `/register` and `/login` require a valid **JWT token** in the `Authorization` header (`Bearer <token>`).
