@@ -14,8 +14,8 @@
     "compose": "docker compose up --build --abort-on-container-failure"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Ibrahim Rouis",
+  "license": "GPL-3.0-only",
   "dependencies": {
     "@fastify/autoload": "^6.0.0",
     "@fastify/jwt": "^9.1.0",
